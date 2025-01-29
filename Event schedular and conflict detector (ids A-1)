@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Scheduler</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .event {
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .event span {
+      font-weight: bold;
+    }
+
+    .conflict {
+      color: red;
+    }
+
+    #eventForm {
+      margin-bottom: 20px;
+    }
+
+    #eventList {
+      margin-top: 20px;
+    }
+
+    input[type="time"] {
+      width: 120px;
+    }
+
+    input[type="text"] {
+      width: 200px;
+    }
+
+    button {
+      padding: 5px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Event Scheduler</h1>
+  <div id="eventForm">
+    <input type="text" id="eventName" placeholder="Event Name" required />
+    <input type="time" id="startTime" required />
+    <input type="time" id="endTime" required />
+    <button onclick="addEvent()">Add Event</button>
+  </div>
+
+  <div id="eventList">
+    <h2>Sorted Schedule</h2>
+    <ul id="eventListContainer"></ul>
+  </div>
+
+  <div id="conflicts">
+    <h2>Conflicts</h2>
+    <ul id="conflictList"></ul>
+  </div>
+
+  <script>
+    let events = [];
+    function addEvent() {
+      const eventName = document.getElementById('eventName').value;
+      const startTime = document.getElementById('startTime').value;
+      const endTime = document.getElementById('endTime').value;
+
+      if (!eventName || !startTime || !endTime) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      const event = {
+        name: eventName,
+        start: startTime,
+        end: endTime
+      };
+      events.push(event);
+      events.sort((a, b) => a.start.localeCompare(b.start));
+
+      displaySchedule();
+      detectConflicts();
+    }
+
+    function displaySchedule() {
+      const eventListContainer = document.getElementById('eventListContainer');
+      eventListContainer.innerHTML = '';
+      events.forEach(event => {
+        const eventItem = document.createElement('li');
+        eventItem.classList.add('event');
+        eventItem.innerHTML = `<span>${event.name
